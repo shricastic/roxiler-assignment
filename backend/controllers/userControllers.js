@@ -160,16 +160,17 @@ const getBarChart = async (req, res) => {
     }
 };
 
+
 const getPieChart = async (req, res) => {
     const month = '10'; 
 
-    if (!month) {
-        return res.status(400).send({ message: 'Month is required' });
+    if (!month || isNaN(parseInt(month))) {
+        return res.status(400).send({ message: 'Valid month is required' });
     }
 
     try {
-        const startDate = moment().month(month - 1).startOf('month').toDate();
-        const endDate = moment().month(month - 1).endOf('month').toDate();
+        const startDate = moment(`${month}-01`, 'MM-DD').startOf('month').toDate();
+        const endDate = moment(startDate).endOf('month').toDate();
 
         const result = await Product.aggregate([
             {
@@ -198,5 +199,7 @@ const getPieChart = async (req, res) => {
         res.status(500).send('Error fetching pie chart data.');
     }
 };
+
+
 
 module.exports = { initialiseDB, getTransactions, getStatistics, getBarChart, getPieChart };
